@@ -1,0 +1,382 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/mattdesl/budo">budo (v9.4.7)</a>
+</h1>
+<h4>a browserify server for rapid prototyping</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.budo">module budo</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.budo.cli">
+            function <span class="apidocSignatureSpan">budo.</span>cli
+            <span class="apidocSignatureSpan">(args, opts)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.budo.error_handler">
+            function <span class="apidocSignatureSpan">budo.</span>error_handler
+            <span class="apidocSignatureSpan">(err, cwd, rootDirName)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.budo.error_handler">module budo.error_handler</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.budo.error_handler.error_handler">
+            function <span class="apidocSignatureSpan">budo.</span>error_handler
+            <span class="apidocSignatureSpan">(err, cwd, rootDirName)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.budo.error_handler.render">
+            function <span class="apidocSignatureSpan">budo.error_handler.</span>render
+            <span class="apidocSignatureSpan">(message, cwd, rootDirName)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.budo" id="apidoc.module.budo">module budo</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.budo.cli" id="apidoc.element.budo.cli">
+        function <span class="apidocSignatureSpan">budo.</span>cli
+        <span class="apidocSignatureSpan">(args, opts)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function budoCLI(args, opts) {
+  var argv = parseArgs(args, opts)
+
+  // if no stream is specified, default to stdout
+  if (argv.stream !== false) {
+    argv.stream = /^win/.test(process.platform) ? process.stdout : stdoutStream
+  }
+
+  var entries = argv._
+  delete argv._
+
+  argv.browserifyArgs = argv['--']
+  delete argv['--']
+
+  if (argv.version) {
+    console.log('budo v' + require('./package.json').version)
+    console.log('browserify v' + require('browserify/package.json').version)
+    console.log('watchify v' + require('watchify-middleware').getWatchifyVersion())
+    return null
+  }
+
+  if (argv.help) {
+    var help = require('path').join(__dirname, 'bin', 'help.txt')
+    require('fs').createReadStream(help)
+      .pipe(process.stdout)
+    return null
+  }
+
+  if (argv.outfile) {
+    console.error(color.yellow('WARNING'), '--outfile has been removed in budo@3.0')
+  }
+
+  if (typeof argv.port === 'string') {
+    argv.port = parseInt(argv.port, 10)
+  }
+  if (typeof argv.livePort === 'string') {
+    argv.livePort = parseInt(argv.livePort, 10)
+  }
+
+  // opts.live can be a glob or a boolean
+  if (typeof argv.live === 'string' &amp;&amp; /(true|false)/.test(argv.live)) {
+    argv.live = argv.live === 'true'
+  }
+
+  // CLI only option for executing a child process
+  var instance = budo(entries, argv).on('error', exit)
+  var onUpdates = [].concat(argv.onupdate).filter(Boolean)
+  onUpdates.forEach(function (cmd) {
+    instance.on('update', execFunc(cmd))
+  })
+
+  return instance
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.budo.error_handler" id="apidoc.element.budo.error_handler">
+        function <span class="apidocSignatureSpan">budo.</span>error_handler
+        <span class="apidocSignatureSpan">(err, cwd, rootDirName)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function errorHandler(err, cwd, rootDirName) {
+  console.error('%s', err)
+  var msgStr = stripAnsi(err.message)
+  var params = [
+    JSON.stringify(msgStr),
+    JSON.stringify(cwd),
+    JSON.stringify(rootDirName)
+  ].join(',')
+  return ';(' + bundleError + ')(' + params + ');'
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.budo.error_handler" id="apidoc.module.budo.error_handler">module budo.error_handler</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.budo.error_handler.error_handler" id="apidoc.element.budo.error_handler.error_handler">
+        function <span class="apidocSignatureSpan">budo.</span>error_handler
+        <span class="apidocSignatureSpan">(err, cwd, rootDirName)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function errorHandler(err, cwd, rootDirName) {
+  console.error('%s', err)
+  var msgStr = stripAnsi(err.message)
+  var params = [
+    JSON.stringify(msgStr),
+    JSON.stringify(cwd),
+    JSON.stringify(rootDirName)
+  ].join(',')
+  return ';(' + bundleError + ')(' + params + ');'
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.budo.error_handler.render" id="apidoc.element.budo.error_handler.render">
+        function <span class="apidocSignatureSpan">budo.error_handler.</span>render
+        <span class="apidocSignatureSpan">(message, cwd, rootDirName)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function bundleError(message, cwd, rootDirName) {
+  // Everything has to be contained inside this function
+  // for it to get stringified correctly. i.e. no require()!
+  console.error(message)
+
+  if (typeof document === 'undefined') {
+    return
+  } else if (!document.body) {
+    document.addEventListener('DOMContentLoaded', createErrorBox)
+  } else {
+    createErrorBox()
+  }
+
+  function createErrorBox () {
+    var parsed = parseError(message)
+
+    var overlayBox = document.createElement('div')
+    css(overlayBox, {
+      position: 'fixed',
+      width: '100%',
+      height: '100%',
+      zIndex: '100000000',
+      top: '0',
+      left: '0',
+      padding: '20px',
+      margin: '0px',
+      'box-sizing': 'border-box',
+      background: '#fff',
+      display: 'block',
+      'font-size': '14px',
+      'font-weight': 'normal',
+      'font-family': 'monospace'
+    })
+
+    if (!parsed.format) {
+      var pre = document.createElement('pre')
+      pre.textContent = message
+      css(pre, {
+        'word-wrap': 'break-word',
+        'white-space': 'pre-wrap',
+        'box-sizing': 'border-box',
+        margin: '0',
+        color: '#ff0000'
+      })
+      overlayBox.appendChild(pre)
+    } else {
+      var commonElements = []
+
+      var messageDiv = document.createElement('div')
+      commonElements.push(messageDiv)
+      messageDiv.textContent = parsed.message
+      overlayBox.appendChild(messageDiv)
+      css(messageDiv, {
+        color: '#ff2e2e',
+        'font-size': '16px'
+      })
+
+      var pathLocContainer = document.createElement('div')
+      css(pathLocContainer, { 'padding-top': '10px' })
+
+      if (isFinite(parsed.line)) {
+        var location = document.createElement('div')
+        commonElements.push(location)
+        var colStr = isFinite(parsed.column) ? (', column ' + parsed.column) : ''
+        location.textContent = ('line ' + parsed.line + colStr).trim()
+        css(location, {
+          color: 'hsl(0, 0%, 50%)',
+          'padding-bottom': '0px',
+          'font-size': '12px',
+          'font-weight': 'bold'
+        })
+        pathLocContainer.appendChild(location)
+      }
+
+      var path = document.createElement('div')
+      path.textContent = trimPath(parsed.path)
+      commonElements.push(path)
+      css(path, { 'font-style': 'italic' })
+      pathLocContainer.appendChild(path)
+      overlayBox.appendChild(pathLocContainer)
+
+      if (parsed.code) {
+        var sourceContainer = document.createElement('div')
+        var source = document.createElement('div')
+        var hr = document.createElement('div')
+        css(hr, {
+          background: 'hsl(0, 0%, 90%)',
+          width: '100%',
+          height: '2px',
+          padding: '0',
+          'margin-bottom': '10px',
+          'margin-top': '10px'
+        })
+        commonElements.push(source)
+        source.textContent = parsed.code
+        css(source, {
+          color: 'black',
+          'font-weight': 'bold',
+          'font-size': '14px',
+          'padding-left': '0px'
+        })
+
+        sourceContainer.appendChild(hr)
+        sourceContainer.appendChild(source)
+        overlayBox.appendChild(sourceContainer)
+      }
+
+      // apply common styles
+      commonElements.forEach(function (e) {
+        css(e, {
+          'word-wrap': 'break-word',
+          'white-space': 'pre-wrap',
+          'box-sizing': 'border-box',
+          display: 'block',
+          margin: '0',
+          'vertical-align': 'bottom'
+        })
+      })
+    }
+    document.body.appendChild(overlayBox)
+  }
+
+  function trimPath (filePath) {
+    if (filePath.indexOf(cwd) === 0) {
+      filePath = rootDirName + filePath.substring(cwd.length + 1)
+    }
+    return filePath
+  }
+
+  function css (element, style) {
+    Object.keys(style).forEach(function (k) {
+      element.style[k] = style[k]
+    })
+  }
+
+  // parse an error message into pieces
+  function parseError (err) {
+    var filePath, lineNum, splitLines
+    var result = {}
+
+    // For root files that syntax-error doesn't pick up:
+    var parseFilePrefix = 'Parsing file '
+    if (err.indexOf(parseFilePrefix) === 0) {
+      var pathWi ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
