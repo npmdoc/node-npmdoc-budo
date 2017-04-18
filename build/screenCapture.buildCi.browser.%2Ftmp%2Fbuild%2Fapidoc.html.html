@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/mattdesl/budo"
-
-    >budo (v9.4.7)</a>
+    <a href="https://github.com/mattdesl/budo">budo (v9.4.7)</a>
 </h1>
 <h4>a browserify server for rapid prototyping</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.budo">module budo</a><ol>
 
@@ -371,10 +364,10 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function createBudo(entries, opts) {
-  var log = bole(&#x27;budo&#x27;)
+  var log = bole('budo')
 
   // if no entries are specified, just options
-  if (entries &#x26;&#x26; !Array.isArray(entries) &#x26;&#x26; typeof entries === &#x27;object&#x27;) {
+  if (entries &amp;&amp; !Array.isArray(entries) &amp;&amp; typeof entries === 'object') {
     opts = entries
     entries = []
   }
@@ -391,8 +384,8 @@
     // by default, pretty-print to the stream with info logging
     if (!opts.ndjson) {
       var pretty = garnish({
-        level: opts.verbose ? &#x27;debug&#x27; : &#x27;info&#x27;,
-        name: &#x27;budo&#x27;
+        level: opts.verbose ? 'debug' : 'info',
+        name: 'budo'
       })
       pretty.pipe(opts.stream)
       opts.stream = pretty
@@ -400,7 +393,7 @@
 
     bole.output({
       stream: opts.stream,
-      level: &#x27;debug&#x27;
+      level: 'debug'
     })
   }
 
@@ -412,9 +405,9 @@
     return entry.from
   })
 
-  if (opts.serve &#x26;&#x26; typeof opts.serve !== &#x27;string&#x27;) {
-    throw new TypeError(&#x27;opts.serve must be a string or undefined&#x27;)
-  } else if (!opts.serve &#x26;&#x26; entries.length &#x3e; 0) {
+  if (opts.serve &amp;&amp; typeof opts.serve !== 'string') {
+    throw new TypeError('opts.serve must be a string or undefined')
+  } else if (!opts.serve &amp;&amp; entries.length &gt; 0) {
     opts.serve = entryObjects[0].url
   }
 
@@ -426,19 +419,19 @@
   var emitter = new EventEmitter()
   var bundler, middleware
 
-  if (entries.length &#x3e; 0 || (opts.browserify &#x26;&#x26; opts.browserify.entries)) {
+  if (entries.length &gt; 0 || (opts.browserify &amp;&amp; opts.browserify.entries)) {
     bundler = createBundler(entryFiles, opts)
     middleware = bundler.middleware
 
-    bundler.on(&#x27;log&#x27;, function (ev) {
-      if (ev.type === &#x27;bundle&#x27;) {
+    bundler.on('log', function (ev) {
+      if (ev.type === 'bundle') {
         var time = ev.elapsed
         ev.elapsed = time
-        ev.name = &#x27;browserify&#x27;
+        ev.name = 'browserify'
         ev.type = undefined
         ev.colors = {
-          elapsed: time &#x3e; 1000 ? &#x27;yellow&#x27; : &#x27;dim&#x27;,
-          message: &#x27;dim &#x27;
+          elapsed: time &gt; 1000 ? 'yellow' : 'dim',
+          message: 'dim '
         }
         log.info(ev)
       }
@@ -446,24 +439,24 @@
 
     // uncaught syntax errors should not stop the server
     // this only happens when errorHandler: false
-    bundler.on(&#x27;error&#x27;, function (err) {
-      console.error(&#x27;Error:&#x27;, err.message ? err.message : err)
+    bundler.on('error', function (err) {
+      console.error('Error:', err.message ? err.message : err)
     })
-    bundler.on(&#x27;bundle-error&#x27;, emitter.emit.bind(emitter, &#x27;bundle-error&#x27;))
-    bundler.on(&#x27;update&#x27;, emitter.emit.bind(emitter, &#x27;update&#x27;))
-    bundler.on(&#x27;pending&#x27;, emitter.emit.bind(emitter, &#x27;pending&#x27;))
+    bundler.on('bundle-error', emitter.emit.bind(emitter, 'bundle-error'))
+    bundler.on('update', emitter.emit.bind(emitter, 'update'))
+    bundler.on('pending', emitter.emit.bind(emitter, 'pending'))
 
-    emitter.on(&#x27;update&#x27;, function (contents, deps) {
-      if (deps.length &#x3e; 1) {
+    emitter.on('update', function (contents, deps) {
+      if (deps.length &gt; 1) {
         log.debug({
-          name: &#x27;browserify&#x27;,
-          message: deps.length + &#x27; files changed&#x27;
+          name: 'browserify',
+          message: deps.length + ' files changed'
         })
       }
     })
   }
 
-  var defaultWatchGlob = opts.watchGlob || &#x27;**/*.{html,css}&#x27;
+  var defaultWatchGlob = opts.watchGlob || '**/*.{html,css}'
   var server = null
   var closed = false
   var started = false
@@ -488,13 +481,13 @@
     emitter
       .watch()
       .live()
-      .on(&#x27;watch&#x27;, function (ev, file) {
-        if (ev !== &#x27;change&#x27; &#x26;&#x26; ev !== &#x27;add&#x27;) {
+      .on('watch', function (ev, file) {
+        if (ev !== 'change' &amp;&amp; ev !== 'add') {
           return
         }
         defaultFileEvent(file)
       })
-      .on(&#x27;pending&#x27;, function () {
+      .on('pending', function () {
         defaultFileEvent(opts.serve)
       })
   }
@@ -502,7 +495,7 @@
   // First, setup a server
   createServer(middleware, opts, function (err, serverInstance, httpsCertKey) {
     if (err) {
-      emitter.emit(&#x27;error&#x27;, err)
+      emitter.emit('error', err)
       return
     }
 
@@ -517,7 +510,7 @@
 
   function defaultFileEvent (file) {
     var filename = path.basename(file)
-    if ((Array.isArray(opts.live) || typeof opts.live === &#x27;string&#x27;) &#x26;&#x26;
+    if ((Array.isArray(opts.live) || typeof opts.live === 'string') &amp;&amp;
         isMatch(filename, opts.live).length === 0) {
       return
     }
@@ -525,7 +518,7 @@
   }
 
   function reload (file) {
-    process.nextTick(emitter.emit.bind(emitter, &#x27;reload&#x27;, file))
+    process.nextTick(emitter.emit.bind(emitter, 'reload', file))
     if (tinylr) {
       tinylr.reload(file)
     }
@@ -554,7 +547,7 @@
 
   var bundler
   var args = opts.browserifyArgs
-  if (args &#x26;&#x26; Array.isArray(args)) {
+  if (args &amp;&amp; Array.isArray(args)) {
     // CLI args for browserify
     bundler = fromArgs(args, bOpts)
   } else {
@@ -567,7 +560,7 @@
   })
 
   var errorHandler = opts.errorHandler
-  if (typeof errorHandler !== &#x27;function&#x27; &#x26;&#x26; errorHandler !== false) {
+  if (typeof errorHandler !== 'function' &amp;&amp; errorHandler !== false) {
     errorHandler = defaultErrorHandler
   }
 
@@ -580,7 +573,7 @@
   return createMiddleware(bundler, {
     delay: opts.delay || 0,
     initialBundle: false,
-    errorHandler: typeof errorHandler === &#x27;function&#x27;
+    errorHandler: typeof errorHandler === 'function'
       ? function (err) { // pass along directories as well
         return errorHandler(err, cwd, rootDirName)
       }
@@ -610,44 +603,44 @@
   var entries = argv._
   delete argv._
 
-  argv.browserifyArgs = argv[&#x27;--&#x27;]
-  delete argv[&#x27;--&#x27;]
+  argv.browserifyArgs = argv['--']
+  delete argv['--']
 
   if (argv.version) {
-    console.log(&#x27;budo v&#x27; + require(&#x27;./package.json&#x27;).version)
-    console.log(&#x27;browserify v&#x27; + require(&#x27;browserify/package.json&#x27;).version)
-    console.log(&#x27;watchify v&#x27; + require(&#x27;watchify-middleware&#x27;).getWatchifyVersion())
+    console.log('budo v' + require('./package.json').version)
+    console.log('browserify v' + require('browserify/package.json').version)
+    console.log('watchify v' + require('watchify-middleware').getWatchifyVersion())
     return null
   }
 
   if (argv.help) {
-    var help = require(&#x27;path&#x27;).join(__dirname, &#x27;bin&#x27;, &#x27;help.txt&#x27;)
-    require(&#x27;fs&#x27;).createReadStream(help)
+    var help = require('path').join(__dirname, 'bin', 'help.txt')
+    require('fs').createReadStream(help)
       .pipe(process.stdout)
     return null
   }
 
   if (argv.outfile) {
-    console.error(color.yellow(&#x27;WARNING&#x27;), &#x27;--outfile has been removed in budo@3.0&#x27;)
+    console.error(color.yellow('WARNING'), '--outfile has been removed in budo@3.0')
   }
 
-  if (typeof argv.port === &#x27;string&#x27;) {
+  if (typeof argv.port === 'string') {
     argv.port = parseInt(argv.port, 10)
   }
-  if (typeof argv.livePort === &#x27;string&#x27;) {
+  if (typeof argv.livePort === 'string') {
     argv.livePort = parseInt(argv.livePort, 10)
   }
 
   // opts.live can be a glob or a boolean
-  if (typeof argv.live === &#x27;string&#x27; &#x26;&#x26; /(true|false)/.test(argv.live)) {
-    argv.live = argv.live === &#x27;true&#x27;
+  if (typeof argv.live === 'string' &amp;&amp; /(true|false)/.test(argv.live)) {
+    argv.live = argv.live === 'true'
   }
 
   // CLI only option for executing a child process
-  var instance = budo(entries, argv).on(&#x27;error&#x27;, exit)
+  var instance = budo(entries, argv).on('error', exit)
   var onUpdates = [].concat(argv.onupdate).filter(Boolean)
   onUpdates.forEach(function (cmd) {
-    instance.on(&#x27;update&#x27;, execFunc(cmd))
+    instance.on('update', execFunc(cmd))
   })
 
   return instance
@@ -665,14 +658,14 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function errorHandler(err, cwd, rootDirName) {
-  console.error(&#x27;%s&#x27;, err)
+  console.error('%s', err)
   var msgStr = stripAnsi(err.message)
   var params = [
     JSON.stringify(msgStr),
     JSON.stringify(cwd),
     JSON.stringify(rootDirName)
-  ].join(&#x27;,&#x27;)
-  return &#x27;;(&#x27; + bundleError + &#x27;)(&#x27; + params + &#x27;);&#x27;
+  ].join(',')
+  return ';(' + bundleError + ')(' + params + ');'
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
@@ -688,7 +681,7 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">file_watch = function (glob, opt) {
   opt = xtend({
-    usePolling: opt &#x26;&#x26; opt.poll,
+    usePolling: opt &amp;&amp; opt.poll,
     ignored: ignores,
     ignoreInitial: true
   }, opt)
@@ -698,17 +691,17 @@
   var ready = false
 
   var watcher = watch(glob, opt)
-  watcher.on(&#x27;add&#x27;, onWatch.bind(null, &#x27;add&#x27;))
-  watcher.on(&#x27;change&#x27;, onWatch.bind(null, &#x27;change&#x27;))
+  watcher.on('add', onWatch.bind(null, 'add'))
+  watcher.on('change', onWatch.bind(null, 'change'))
 
   // chokidar@1.0.0-r6 only allows close after ready event
-  watcher.once(&#x27;ready&#x27;, function () {
+  watcher.once('ready', function () {
     ready = true
     if (closed) watcher.close()
   })
 
   function onWatch (event, path) {
-    emitter.emit(&#x27;watch&#x27;, event, path)
+    emitter.emit('watch', event, path)
   }
 
   emitter.close = function () {
@@ -764,7 +757,7 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function mapEntry(file) {
-  if (file === &#x27;.&#x27;) {
+  if (file === '.') {
     file = entry()
   }
 
@@ -773,16 +766,16 @@
   if (/^[A-Z]:[/\\]+/.test(file)) {
     parts = file.split(/:(?:(?=[^/\\]))/)
   } else {
-    parts = file.split(&#x27;:&#x27;)
+    parts = file.split(':')
   }
 
   var pathFrom, pathUrl
 
-  if (parts.length &#x3e; 1 &#x26;&#x26; parts[1].length &#x3e; 0) {
+  if (parts.length &gt; 1 &amp;&amp; parts[1].length &gt; 0) {
     pathFrom = parts[0]
     pathUrl = parts[1]
 
-    if (pathFrom === &#x27;.&#x27;) {
+    if (pathFrom === '.') {
       pathFrom = entry()
     }
   } else {
@@ -822,25 +815,25 @@
 
   // Everything is logged except favicon.ico
   var logHandler = logger({
-    ignore: [ &#x27;/favicon.ico&#x27; ]
+    ignore: [ '/favicon.ico' ]
   })
   handler.use(function (req, res, next) {
     if (cors) {
-      res.setHeader(&#x27;Access-Control-Allow-Headers&#x27;, &#x27;Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With
-&#x27;)
-      res.setHeader(&#x27;Access-Control-Allow-Methods&#x27;, &#x27;GET, PUT, POST&#x27;)
-      res.setHeader(&#x27;Access-Control-Allow-Origin&#x27;, &#x27;*&#x27;)
+      res.setHeader('Access-Control-Allow-Headers', 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With
+')
+      res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST')
+      res.setHeader('Access-Control-Allow-Origin', '*')
     }
     logHandler(req, res, next)
   })
 
   // User middleware(s) can override others
   middlewares.forEach(function (middleware) {
-    if (typeof middleware !== &#x27;function&#x27;) {
-      throw new Error(&#x27;middleware options must be functions&#x27;)
+    if (typeof middleware !== 'function') {
+      throw new Error('middleware options must be functions')
     }
     handler.use(function (req, res, next) {
-      logHandler.type = &#x27;middleware&#x27;
+      logHandler.type = 'middleware'
       middleware(req, res, next)
     })
   })
@@ -859,7 +852,7 @@
 
   // Entry (watchify) middleware
   if (entryMiddleware) {
-    var entryRoute = &#x27;/&#x27; + urlLib.parse(entrySrc).pathname
+    var entryRoute = '/' + urlLib.parse(entrySrc).pathname
     handler.use(function (req, res, next) {
       if (urlTrim(req.url) === urlTrim(entryRoute)) {
         entryMiddleware(req, res, next)
@@ -870,7 +863,7 @@
   }
 
   // Ignore favicon clutter
-  handler.mount(&#x27;/favicon.ico&#x27;, favicon)
+  handler.mount('/favicon.ico', favicon)
 
   // If the user wishes to *always* serve
   // a generated index instead of a static one.
@@ -884,7 +877,7 @@
       cacheControl: false
     })
     handler.use(function (req, res, next) {
-      logHandler.type = &#x27;static&#x27;
+      logHandler.type = 'static'
       staticHandler(req, res, next)
     })
   })
@@ -896,7 +889,7 @@
   // Handle errors
   handler.use(function (req, res) {
     res.statusCode = 404
-    res.end(&#x27;404 not found: &#x27; + escapeHtml(req.url))
+    res.end('404 not found: ' + escapeHtml(req.url))
   })
 
   // Allow live options to be changed at runtime
@@ -909,25 +902,25 @@
 
   function favicon (req, res) {
     var maxAge = 345600 // 4 days
-    res.setHeader(&#x27;Cache-Control&#x27;, &#x27;public, max-age=&#x27; + Math.floor(maxAge / 1000))
-    res.setHeader(&#x27;Content-Type&#x27;, &#x27;image/x-icon&#x27;)
+    res.setHeader('Cache-Control', 'public, max-age=' + Math.floor(maxAge / 1000))
+    res.setHeader('Content-Type', 'image/x-icon')
     res.statusCode = 200
     res.end()
   }
 
   function indexHandler (req, res, next) {
-    if (urlLib.parse(req.url).pathname === &#x27;/&#x27; || /\/index.html?/i.test(req.url)) {
+    if (urlLib.parse(req.url).pathname === '/' || /\/index.html?/i.test(req.url)) {
       // If we reach this, our response will be generated
       // (not static from local file system)
-      logHandler.type = &#x27;generated&#x27;
-      res.setHeader(&#x27;content-type&#x27;, &#x27;text/html&#x27;)
+      logHandler.type = 'generated'
+      res.setHeader('content-type', 'text/html')
 
       var stream = opts.defaultIndex || defaultIndex
       stream({
         entry: entrySrc,
         title: opts.title,
         css: opts.css,
-        base: opts.base === true ? &#x27;/&#x27; : (opts.base || null)
+        base: opts.base === true ? '/' : (opts.base || null)
       }).pipe(res)
     } else {
       next()
@@ -949,49 +942,49 @@
     <li>description and source-code<pre class="apidocCodePre">function parseArgs(args, opt) {
   var argv = minimist(args, {
     boolean: [
-      &#x27;stream&#x27;,
-      &#x27;debug&#x27;,
-      &#x27;errorHandler&#x27;,
-      &#x27;forceDefaultIndex&#x27;,
-      &#x27;open&#x27;,
-      &#x27;portfind&#x27;,
-      &#x27;pushstate&#x27;,
-      &#x27;ndjson&#x27;,
-      &#x27;verbose&#x27;,
-      &#x27;cors&#x27;,
-      &#x27;ssl&#x27;
+      'stream',
+      'debug',
+      'errorHandler',
+      'forceDefaultIndex',
+      'open',
+      'portfind',
+      'pushstate',
+      'ndjson',
+      'verbose',
+      'cors',
+      'ssl'
     ],
     string: [
-      &#x27;host&#x27;,
-      &#x27;port&#x27;,
-      &#x27;dir&#x27;,
-      &#x27;onupdate&#x27;,
-      &#x27;serve&#x27;,
-      &#x27;title&#x27;,
-      &#x27;watchGlob&#x27;,
-      &#x27;cert&#x27;,
-      &#x27;key&#x27;
+      'host',
+      'port',
+      'dir',
+      'onupdate',
+      'serve',
+      'title',
+      'watchGlob',
+      'cert',
+      'key'
     ],
     default: module.exports.defaults,
     alias: {
-      port: &#x27;p&#x27;,
-      ssl: &#x27;S&#x27;,
-      serve: &#x27;s&#x27;,
-      cert: &#x27;C&#x27;,
-      key: &#x27;K&#x27;,
-      verbose: &#x27;v&#x27;,
-      help: &#x27;h&#x27;,
-      host: &#x27;H&#x27;,
-      dir: &#x27;d&#x27;,
-      live: &#x27;l&#x27;,
-      open: &#x27;o&#x27;,
-      watchGlob: [ &#x27;wg&#x27;, &#x27;watch-glob&#x27; ],
-      errorHandler: &#x27;error-handler&#x27;,
-      forceDefaultIndex: &#x27;force-default-index&#x27;,
-      &#x27;live-port&#x27;: [&#x27;L&#x27;, &#x27;livePort&#x27;],
-      pushstate: &#x27;P&#x27;
+      port: 'p',
+      ssl: 'S',
+      serve: 's',
+      cert: 'C',
+      key: 'K',
+      verbose: 'v',
+      help: 'h',
+      host: 'H',
+      dir: 'd',
+      live: 'l',
+      open: 'o',
+      watchGlob: [ 'wg', 'watch-glob' ],
+      errorHandler: 'error-handler',
+      forceDefaultIndex: 'force-default-index',
+      'live-port': ['L', 'livePort'],
+      pushstate: 'P'
     },
-    &#x27;--&#x27;: true
+    '--': true
   })
   return xtend(argv, opt)
 }</pre></li>
@@ -1011,13 +1004,13 @@
   var handler = createMiddleware(entryMiddleware, opts)
   var ssl = opts.ssl
 
-  if (ssl &#x26;&#x26; (!opts.cert &#x26;&#x26; opts.key) || (!opts.key &#x26;&#x26; opts.cert)) {
-    throw new TypeError(&#x27;If you specify a cert, you must specify a key and vice versa.\n&#x27; +
-        &#x27;Or, you can omit the &#x22;cert&#x22; and &#x22;key&#x22; options to generate a new self-signed certificate.&#x27;)
+  if (ssl &amp;&amp; (!opts.cert &amp;&amp; opts.key) || (!opts.key &amp;&amp; opts.cert)) {
+    throw new TypeError('If you specify a cert, you must specify a key and vice versa.\n' +
+        'Or, you can omit the "cert" and "key" options to generate a new self-signed certificate.')
   }
 
   if (opts.ssl) {
-    if (opts.cert &#x26;&#x26; opts.key) {
+    if (opts.cert &amp;&amp; opts.key) {
       // user specified their own cert/key pair
       create({
         cert: fs.readFileSync(opts.cert),
@@ -1044,7 +1037,7 @@
       : http.createServer(handler)
     server.setLiveOptions = handler.setLiveOptions
 
-    // TODO: Perhaps --ssl should support some sort of HTTP -&#x3e; HTTPS redirect
+    // TODO: Perhaps --ssl should support some sort of HTTP -&gt; HTTPS redirect
     process.nextTick(function () {
       cb(null, server, httpsOpts)
     })
@@ -1067,7 +1060,7 @@
   var ignores = [].concat(opts.ignore).filter(Boolean)
 
   var httpLogger = function simpleHttpLogger (req, res, next) {
-    if (ignores.indexOf(req.url) &#x3e;= 0) return next()
+    if (ignores.indexOf(req.url) &gt;= 0) return next()
     if (!req.url) return next()
 
     // request data
@@ -1093,12 +1086,12 @@
       log.info({
         elapsed: ms,
         contentLength: byteLength,
-        method: (req.method || &#x27;GET&#x27;).toUpperCase(),
+        method: (req.method || 'GET').toUpperCase(),
         url: req.url,
         statusCode: res.statusCode,
-        type: httpLogger.type === &#x27;static&#x27; ? undefined : httpLogger.type,
+        type: httpLogger.type === 'static' ? undefined : httpLogger.type,
         colors: {
-          elapsed: ms &#x3e; 1000 ? &#x27;yellow&#x27; : &#x27;dim&#x27;
+          elapsed: ms &gt; 1000 ? 'yellow' : 'dim'
         }
       })
     }
@@ -1125,7 +1118,7 @@
     next()
   }
 
-  httpLogger.type = &#x27;static&#x27;
+  httpLogger.type = 'static'
   return httpLogger
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
@@ -1142,7 +1135,7 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">tinylr = function (opt) {
   opt = xtend(opt)
-  if (typeof opt.port !== &#x27;number&#x27;) {
+  if (typeof opt.port !== 'number') {
     opt.port = 35729
   }
 
@@ -1156,16 +1149,16 @@
   server.listen(opt.port, opt.host || undefined, function () {
     ready = true
     if (closed) return server.close()
-    log.info({ message: &#x27;LiveReload running on &#x27; + opt.port })
+    log.info({ message: 'LiveReload running on ' + opt.port })
   })
 
   var serverImpl = server.server
-  serverImpl.removeAllListeners(&#x27;error&#x27;)
-  serverImpl.on(&#x27;error&#x27;, function (err) {
-    if (err.code === &#x27;EADDRINUSE&#x27;) {
-      process.stderr.write(&#x27;ERROR: livereload not started, port &#x27; + opt.port + &#x27; is in use\n&#x27;)
+  serverImpl.removeAllListeners('error')
+  serverImpl.on('error', function (err) {
+    if (err.code === 'EADDRINUSE') {
+      process.stderr.write('ERROR: livereload not started, port ' + opt.port + ' is in use\n')
     } else {
-      process.stderr.write((err.stack ? err.stack : err) + &#x27;\n&#x27;)
+      process.stderr.write((err.stack ? err.stack : err) + '\n')
     }
     close()
   })
@@ -1183,7 +1176,7 @@
       try {
         server.changed({
           body: {
-            files: path ? [ path ] : &#x27;*&#x27;
+            files: path ? [ path ] : '*'
           }
         })
       } catch (e) {
@@ -1233,7 +1226,7 @@
 
   var bundler
   var args = opts.browserifyArgs
-  if (args &#x26;&#x26; Array.isArray(args)) {
+  if (args &amp;&amp; Array.isArray(args)) {
     // CLI args for browserify
     bundler = fromArgs(args, bOpts)
   } else {
@@ -1246,7 +1239,7 @@
   })
 
   var errorHandler = opts.errorHandler
-  if (typeof errorHandler !== &#x27;function&#x27; &#x26;&#x26; errorHandler !== false) {
+  if (typeof errorHandler !== 'function' &amp;&amp; errorHandler !== false) {
     errorHandler = defaultErrorHandler
   }
 
@@ -1259,7 +1252,7 @@
   return createMiddleware(bundler, {
     delay: opts.delay || 0,
     initialBundle: false,
-    errorHandler: typeof errorHandler === &#x27;function&#x27;
+    errorHandler: typeof errorHandler === 'function'
       ? function (err) { // pass along directories as well
         return errorHandler(err, cwd, rootDirName)
       }
@@ -1294,44 +1287,44 @@
   var entries = argv._
   delete argv._
 
-  argv.browserifyArgs = argv[&#x27;--&#x27;]
-  delete argv[&#x27;--&#x27;]
+  argv.browserifyArgs = argv['--']
+  delete argv['--']
 
   if (argv.version) {
-    console.log(&#x27;budo v&#x27; + require(&#x27;./package.json&#x27;).version)
-    console.log(&#x27;browserify v&#x27; + require(&#x27;browserify/package.json&#x27;).version)
-    console.log(&#x27;watchify v&#x27; + require(&#x27;watchify-middleware&#x27;).getWatchifyVersion())
+    console.log('budo v' + require('./package.json').version)
+    console.log('browserify v' + require('browserify/package.json').version)
+    console.log('watchify v' + require('watchify-middleware').getWatchifyVersion())
     return null
   }
 
   if (argv.help) {
-    var help = require(&#x27;path&#x27;).join(__dirname, &#x27;bin&#x27;, &#x27;help.txt&#x27;)
-    require(&#x27;fs&#x27;).createReadStream(help)
+    var help = require('path').join(__dirname, 'bin', 'help.txt')
+    require('fs').createReadStream(help)
       .pipe(process.stdout)
     return null
   }
 
   if (argv.outfile) {
-    console.error(color.yellow(&#x27;WARNING&#x27;), &#x27;--outfile has been removed in budo@3.0&#x27;)
+    console.error(color.yellow('WARNING'), '--outfile has been removed in budo@3.0')
   }
 
-  if (typeof argv.port === &#x27;string&#x27;) {
+  if (typeof argv.port === 'string') {
     argv.port = parseInt(argv.port, 10)
   }
-  if (typeof argv.livePort === &#x27;string&#x27;) {
+  if (typeof argv.livePort === 'string') {
     argv.livePort = parseInt(argv.livePort, 10)
   }
 
   // opts.live can be a glob or a boolean
-  if (typeof argv.live === &#x27;string&#x27; &#x26;&#x26; /(true|false)/.test(argv.live)) {
-    argv.live = argv.live === &#x27;true&#x27;
+  if (typeof argv.live === 'string' &amp;&amp; /(true|false)/.test(argv.live)) {
+    argv.live = argv.live === 'true'
   }
 
   // CLI only option for executing a child process
-  var instance = budo(entries, argv).on(&#x27;error&#x27;, exit)
+  var instance = budo(entries, argv).on('error', exit)
   var onUpdates = [].concat(argv.onupdate).filter(Boolean)
   onUpdates.forEach(function (cmd) {
-    instance.on(&#x27;update&#x27;, execFunc(cmd))
+    instance.on('update', execFunc(cmd))
   })
 
   return instance
@@ -1354,14 +1347,14 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function errorHandler(err, cwd, rootDirName) {
-  console.error(&#x27;%s&#x27;, err)
+  console.error('%s', err)
   var msgStr = stripAnsi(err.message)
   var params = [
     JSON.stringify(msgStr),
     JSON.stringify(cwd),
     JSON.stringify(rootDirName)
-  ].join(&#x27;,&#x27;)
-  return &#x27;;(&#x27; + bundleError + &#x27;)(&#x27; + params + &#x27;);&#x27;
+  ].join(',')
+  return ';(' + bundleError + ')(' + params + ');'
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
@@ -1380,10 +1373,10 @@
   // for it to get stringified correctly. i.e. no require()!
   console.error(message)
 
-  if (typeof document === &#x27;undefined&#x27;) {
+  if (typeof document === 'undefined') {
     return
   } else if (!document.body) {
-    document.addEventListener(&#x27;DOMContentLoaded&#x27;, createErrorBox)
+    document.addEventListener('DOMContentLoaded', createErrorBox)
   } else {
     createErrorBox()
   }
@@ -1391,90 +1384,90 @@
   function createErrorBox () {
     var parsed = parseError(message)
 
-    var overlayBox = document.createElement(&#x27;div&#x27;)
+    var overlayBox = document.createElement('div')
     css(overlayBox, {
-      position: &#x27;fixed&#x27;,
-      width: &#x27;100%&#x27;,
-      height: &#x27;100%&#x27;,
-      zIndex: &#x27;100000000&#x27;,
-      top: &#x27;0&#x27;,
-      left: &#x27;0&#x27;,
-      padding: &#x27;20px&#x27;,
-      margin: &#x27;0px&#x27;,
-      &#x27;box-sizing&#x27;: &#x27;border-box&#x27;,
-      background: &#x27;#fff&#x27;,
-      display: &#x27;block&#x27;,
-      &#x27;font-size&#x27;: &#x27;14px&#x27;,
-      &#x27;font-weight&#x27;: &#x27;normal&#x27;,
-      &#x27;font-family&#x27;: &#x27;monospace&#x27;
+      position: 'fixed',
+      width: '100%',
+      height: '100%',
+      zIndex: '100000000',
+      top: '0',
+      left: '0',
+      padding: '20px',
+      margin: '0px',
+      'box-sizing': 'border-box',
+      background: '#fff',
+      display: 'block',
+      'font-size': '14px',
+      'font-weight': 'normal',
+      'font-family': 'monospace'
     })
 
     if (!parsed.format) {
-      var pre = document.createElement(&#x27;pre&#x27;)
+      var pre = document.createElement('pre')
       pre.textContent = message
       css(pre, {
-        &#x27;word-wrap&#x27;: &#x27;break-word&#x27;,
-        &#x27;white-space&#x27;: &#x27;pre-wrap&#x27;,
-        &#x27;box-sizing&#x27;: &#x27;border-box&#x27;,
-        margin: &#x27;0&#x27;,
-        color: &#x27;#ff0000&#x27;
+        'word-wrap': 'break-word',
+        'white-space': 'pre-wrap',
+        'box-sizing': 'border-box',
+        margin: '0',
+        color: '#ff0000'
       })
       overlayBox.appendChild(pre)
     } else {
       var commonElements = []
 
-      var messageDiv = document.createElement(&#x27;div&#x27;)
+      var messageDiv = document.createElement('div')
       commonElements.push(messageDiv)
       messageDiv.textContent = parsed.message
       overlayBox.appendChild(messageDiv)
       css(messageDiv, {
-        color: &#x27;#ff2e2e&#x27;,
-        &#x27;font-size&#x27;: &#x27;16px&#x27;
+        color: '#ff2e2e',
+        'font-size': '16px'
       })
 
-      var pathLocContainer = document.createElement(&#x27;div&#x27;)
-      css(pathLocContainer, { &#x27;padding-top&#x27;: &#x27;10px&#x27; })
+      var pathLocContainer = document.createElement('div')
+      css(pathLocContainer, { 'padding-top': '10px' })
 
       if (isFinite(parsed.line)) {
-        var location = document.createElement(&#x27;div&#x27;)
+        var location = document.createElement('div')
         commonElements.push(location)
-        var colStr = isFinite(parsed.column) ? (&#x27;, column &#x27; + parsed.column) : &#x27;&#x27;
-        location.textContent = (&#x27;line &#x27; + parsed.line + colStr).trim()
+        var colStr = isFinite(parsed.column) ? (', column ' + parsed.column) : ''
+        location.textContent = ('line ' + parsed.line + colStr).trim()
         css(location, {
-          color: &#x27;hsl(0, 0%, 50%)&#x27;,
-          &#x27;padding-bottom&#x27;: &#x27;0px&#x27;,
-          &#x27;font-size&#x27;: &#x27;12px&#x27;,
-          &#x27;font-weight&#x27;: &#x27;bold&#x27;
+          color: 'hsl(0, 0%, 50%)',
+          'padding-bottom': '0px',
+          'font-size': '12px',
+          'font-weight': 'bold'
         })
         pathLocContainer.appendChild(location)
       }
 
-      var path = document.createElement(&#x27;div&#x27;)
+      var path = document.createElement('div')
       path.textContent = trimPath(parsed.path)
       commonElements.push(path)
-      css(path, { &#x27;font-style&#x27;: &#x27;italic&#x27; })
+      css(path, { 'font-style': 'italic' })
       pathLocContainer.appendChild(path)
       overlayBox.appendChild(pathLocContainer)
 
       if (parsed.code) {
-        var sourceContainer = document.createElement(&#x27;div&#x27;)
-        var source = document.createElement(&#x27;div&#x27;)
-        var hr = document.createElement(&#x27;div&#x27;)
+        var sourceContainer = document.createElement('div')
+        var source = document.createElement('div')
+        var hr = document.createElement('div')
         css(hr, {
-          background: &#x27;hsl(0, 0%, 90%)&#x27;,
-          width: &#x27;100%&#x27;,
-          height: &#x27;2px&#x27;,
-          padding: &#x27;0&#x27;,
-          &#x27;margin-bottom&#x27;: &#x27;10px&#x27;,
-          &#x27;margin-top&#x27;: &#x27;10px&#x27;
+          background: 'hsl(0, 0%, 90%)',
+          width: '100%',
+          height: '2px',
+          padding: '0',
+          'margin-bottom': '10px',
+          'margin-top': '10px'
         })
         commonElements.push(source)
         source.textContent = parsed.code
         css(source, {
-          color: &#x27;black&#x27;,
-          &#x27;font-weight&#x27;: &#x27;bold&#x27;,
-          &#x27;font-size&#x27;: &#x27;14px&#x27;,
-          &#x27;padding-left&#x27;: &#x27;0px&#x27;
+          color: 'black',
+          'font-weight': 'bold',
+          'font-size': '14px',
+          'padding-left': '0px'
         })
 
         sourceContainer.appendChild(hr)
@@ -1485,12 +1478,12 @@
       // apply common styles
       commonElements.forEach(function (e) {
         css(e, {
-          &#x27;word-wrap&#x27;: &#x27;break-word&#x27;,
-          &#x27;white-space&#x27;: &#x27;pre-wrap&#x27;,
-          &#x27;box-sizing&#x27;: &#x27;border-box&#x27;,
-          display: &#x27;block&#x27;,
-          margin: &#x27;0&#x27;,
-          &#x27;vertical-align&#x27;: &#x27;bottom&#x27;
+          'word-wrap': 'break-word',
+          'white-space': 'pre-wrap',
+          'box-sizing': 'border-box',
+          display: 'block',
+          margin: '0',
+          'vertical-align': 'bottom'
         })
       })
     }
@@ -1515,8 +1508,8 @@
     var filePath, lineNum, splitLines
     var result = {}
 
-    // For root files that syntax-error doesn&#x27;t pick up:
-    var parseFilePrefix = &#x27;Parsing file &#x27;
+    // For root files that syntax-error doesn't pick up:
+    var parseFilePrefix = 'Parsing file '
     if (err.indexOf(parseFilePrefix) === 0) {
       var pathWi ...</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
@@ -1538,7 +1531,7 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">file_watch = function (glob, opt) {
   opt = xtend({
-    usePolling: opt &#x26;&#x26; opt.poll,
+    usePolling: opt &amp;&amp; opt.poll,
     ignored: ignores,
     ignoreInitial: true
   }, opt)
@@ -1548,17 +1541,17 @@
   var ready = false
 
   var watcher = watch(glob, opt)
-  watcher.on(&#x27;add&#x27;, onWatch.bind(null, &#x27;add&#x27;))
-  watcher.on(&#x27;change&#x27;, onWatch.bind(null, &#x27;change&#x27;))
+  watcher.on('add', onWatch.bind(null, 'add'))
+  watcher.on('change', onWatch.bind(null, 'change'))
 
   // chokidar@1.0.0-r6 only allows close after ready event
-  watcher.once(&#x27;ready&#x27;, function () {
+  watcher.once('ready', function () {
     ready = true
     if (closed) watcher.close()
   })
 
   function onWatch (event, path) {
-    emitter.emit(&#x27;watch&#x27;, event, path)
+    emitter.emit('watch', event, path)
   }
 
   emitter.close = function () {
@@ -1626,7 +1619,7 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function mapEntry(file) {
-  if (file === &#x27;.&#x27;) {
+  if (file === '.') {
     file = entry()
   }
 
@@ -1635,16 +1628,16 @@
   if (/^[A-Z]:[/\\]+/.test(file)) {
     parts = file.split(/:(?:(?=[^/\\]))/)
   } else {
-    parts = file.split(&#x27;:&#x27;)
+    parts = file.split(':')
   }
 
   var pathFrom, pathUrl
 
-  if (parts.length &#x3e; 1 &#x26;&#x26; parts[1].length &#x3e; 0) {
+  if (parts.length &gt; 1 &amp;&amp; parts[1].length &gt; 0) {
     pathFrom = parts[0]
     pathUrl = parts[1]
 
-    if (pathFrom === &#x27;.&#x27;) {
+    if (pathFrom === '.') {
       pathFrom = entry()
     }
   } else {
@@ -1689,25 +1682,25 @@
 
   // Everything is logged except favicon.ico
   var logHandler = logger({
-    ignore: [ &#x27;/favicon.ico&#x27; ]
+    ignore: [ '/favicon.ico' ]
   })
   handler.use(function (req, res, next) {
     if (cors) {
-      res.setHeader(&#x27;Access-Control-Allow-Headers&#x27;, &#x27;Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With
-&#x27;)
-      res.setHeader(&#x27;Access-Control-Allow-Methods&#x27;, &#x27;GET, PUT, POST&#x27;)
-      res.setHeader(&#x27;Access-Control-Allow-Origin&#x27;, &#x27;*&#x27;)
+      res.setHeader('Access-Control-Allow-Headers', 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With
+')
+      res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST')
+      res.setHeader('Access-Control-Allow-Origin', '*')
     }
     logHandler(req, res, next)
   })
 
   // User middleware(s) can override others
   middlewares.forEach(function (middleware) {
-    if (typeof middleware !== &#x27;function&#x27;) {
-      throw new Error(&#x27;middleware options must be functions&#x27;)
+    if (typeof middleware !== 'function') {
+      throw new Error('middleware options must be functions')
     }
     handler.use(function (req, res, next) {
-      logHandler.type = &#x27;middleware&#x27;
+      logHandler.type = 'middleware'
       middleware(req, res, next)
     })
   })
@@ -1726,7 +1719,7 @@
 
   // Entry (watchify) middleware
   if (entryMiddleware) {
-    var entryRoute = &#x27;/&#x27; + urlLib.parse(entrySrc).pathname
+    var entryRoute = '/' + urlLib.parse(entrySrc).pathname
     handler.use(function (req, res, next) {
       if (urlTrim(req.url) === urlTrim(entryRoute)) {
         entryMiddleware(req, res, next)
@@ -1737,7 +1730,7 @@
   }
 
   // Ignore favicon clutter
-  handler.mount(&#x27;/favicon.ico&#x27;, favicon)
+  handler.mount('/favicon.ico', favicon)
 
   // If the user wishes to *always* serve
   // a generated index instead of a static one.
@@ -1751,7 +1744,7 @@
       cacheControl: false
     })
     handler.use(function (req, res, next) {
-      logHandler.type = &#x27;static&#x27;
+      logHandler.type = 'static'
       staticHandler(req, res, next)
     })
   })
@@ -1763,7 +1756,7 @@
   // Handle errors
   handler.use(function (req, res) {
     res.statusCode = 404
-    res.end(&#x27;404 not found: &#x27; + escapeHtml(req.url))
+    res.end('404 not found: ' + escapeHtml(req.url))
   })
 
   // Allow live options to be changed at runtime
@@ -1776,25 +1769,25 @@
 
   function favicon (req, res) {
     var maxAge = 345600 // 4 days
-    res.setHeader(&#x27;Cache-Control&#x27;, &#x27;public, max-age=&#x27; + Math.floor(maxAge / 1000))
-    res.setHeader(&#x27;Content-Type&#x27;, &#x27;image/x-icon&#x27;)
+    res.setHeader('Cache-Control', 'public, max-age=' + Math.floor(maxAge / 1000))
+    res.setHeader('Content-Type', 'image/x-icon')
     res.statusCode = 200
     res.end()
   }
 
   function indexHandler (req, res, next) {
-    if (urlLib.parse(req.url).pathname === &#x27;/&#x27; || /\/index.html?/i.test(req.url)) {
+    if (urlLib.parse(req.url).pathname === '/' || /\/index.html?/i.test(req.url)) {
       // If we reach this, our response will be generated
       // (not static from local file system)
-      logHandler.type = &#x27;generated&#x27;
-      res.setHeader(&#x27;content-type&#x27;, &#x27;text/html&#x27;)
+      logHandler.type = 'generated'
+      res.setHeader('content-type', 'text/html')
 
       var stream = opts.defaultIndex || defaultIndex
       stream({
         entry: entrySrc,
         title: opts.title,
         css: opts.css,
-        base: opts.base === true ? &#x27;/&#x27; : (opts.base || null)
+        base: opts.base === true ? '/' : (opts.base || null)
       }).pipe(res)
     } else {
       next()
@@ -1821,49 +1814,49 @@
     <li>description and source-code<pre class="apidocCodePre">function parseArgs(args, opt) {
   var argv = minimist(args, {
     boolean: [
-      &#x27;stream&#x27;,
-      &#x27;debug&#x27;,
-      &#x27;errorHandler&#x27;,
-      &#x27;forceDefaultIndex&#x27;,
-      &#x27;open&#x27;,
-      &#x27;portfind&#x27;,
-      &#x27;pushstate&#x27;,
-      &#x27;ndjson&#x27;,
-      &#x27;verbose&#x27;,
-      &#x27;cors&#x27;,
-      &#x27;ssl&#x27;
+      'stream',
+      'debug',
+      'errorHandler',
+      'forceDefaultIndex',
+      'open',
+      'portfind',
+      'pushstate',
+      'ndjson',
+      'verbose',
+      'cors',
+      'ssl'
     ],
     string: [
-      &#x27;host&#x27;,
-      &#x27;port&#x27;,
-      &#x27;dir&#x27;,
-      &#x27;onupdate&#x27;,
-      &#x27;serve&#x27;,
-      &#x27;title&#x27;,
-      &#x27;watchGlob&#x27;,
-      &#x27;cert&#x27;,
-      &#x27;key&#x27;
+      'host',
+      'port',
+      'dir',
+      'onupdate',
+      'serve',
+      'title',
+      'watchGlob',
+      'cert',
+      'key'
     ],
     default: module.exports.defaults,
     alias: {
-      port: &#x27;p&#x27;,
-      ssl: &#x27;S&#x27;,
-      serve: &#x27;s&#x27;,
-      cert: &#x27;C&#x27;,
-      key: &#x27;K&#x27;,
-      verbose: &#x27;v&#x27;,
-      help: &#x27;h&#x27;,
-      host: &#x27;H&#x27;,
-      dir: &#x27;d&#x27;,
-      live: &#x27;l&#x27;,
-      open: &#x27;o&#x27;,
-      watchGlob: [ &#x27;wg&#x27;, &#x27;watch-glob&#x27; ],
-      errorHandler: &#x27;error-handler&#x27;,
-      forceDefaultIndex: &#x27;force-default-index&#x27;,
-      &#x27;live-port&#x27;: [&#x27;L&#x27;, &#x27;livePort&#x27;],
-      pushstate: &#x27;P&#x27;
+      port: 'p',
+      ssl: 'S',
+      serve: 's',
+      cert: 'C',
+      key: 'K',
+      verbose: 'v',
+      help: 'h',
+      host: 'H',
+      dir: 'd',
+      live: 'l',
+      open: 'o',
+      watchGlob: [ 'wg', 'watch-glob' ],
+      errorHandler: 'error-handler',
+      forceDefaultIndex: 'force-default-index',
+      'live-port': ['L', 'livePort'],
+      pushstate: 'P'
     },
-    &#x27;--&#x27;: true
+    '--': true
   })
   return xtend(argv, opt)
 }</pre></li>
@@ -1890,13 +1883,13 @@
   var handler = createMiddleware(entryMiddleware, opts)
   var ssl = opts.ssl
 
-  if (ssl &#x26;&#x26; (!opts.cert &#x26;&#x26; opts.key) || (!opts.key &#x26;&#x26; opts.cert)) {
-    throw new TypeError(&#x27;If you specify a cert, you must specify a key and vice versa.\n&#x27; +
-        &#x27;Or, you can omit the &#x22;cert&#x22; and &#x22;key&#x22; options to generate a new self-signed certificate.&#x27;)
+  if (ssl &amp;&amp; (!opts.cert &amp;&amp; opts.key) || (!opts.key &amp;&amp; opts.cert)) {
+    throw new TypeError('If you specify a cert, you must specify a key and vice versa.\n' +
+        'Or, you can omit the "cert" and "key" options to generate a new self-signed certificate.')
   }
 
   if (opts.ssl) {
-    if (opts.cert &#x26;&#x26; opts.key) {
+    if (opts.cert &amp;&amp; opts.key) {
       // user specified their own cert/key pair
       create({
         cert: fs.readFileSync(opts.cert),
@@ -1923,7 +1916,7 @@
       : http.createServer(handler)
     server.setLiveOptions = handler.setLiveOptions
 
-    // TODO: Perhaps --ssl should support some sort of HTTP -&#x3e; HTTPS redirect
+    // TODO: Perhaps --ssl should support some sort of HTTP -&gt; HTTPS redirect
     process.nextTick(function () {
       cb(null, server, httpsOpts)
     })
@@ -1951,7 +1944,7 @@
   var ignores = [].concat(opts.ignore).filter(Boolean)
 
   var httpLogger = function simpleHttpLogger (req, res, next) {
-    if (ignores.indexOf(req.url) &#x3e;= 0) return next()
+    if (ignores.indexOf(req.url) &gt;= 0) return next()
     if (!req.url) return next()
 
     // request data
@@ -1977,12 +1970,12 @@
       log.info({
         elapsed: ms,
         contentLength: byteLength,
-        method: (req.method || &#x27;GET&#x27;).toUpperCase(),
+        method: (req.method || 'GET').toUpperCase(),
         url: req.url,
         statusCode: res.statusCode,
-        type: httpLogger.type === &#x27;static&#x27; ? undefined : httpLogger.type,
+        type: httpLogger.type === 'static' ? undefined : httpLogger.type,
         colors: {
-          elapsed: ms &#x3e; 1000 ? &#x27;yellow&#x27; : &#x27;dim&#x27;
+          elapsed: ms &gt; 1000 ? 'yellow' : 'dim'
         }
       })
     }
@@ -2009,7 +2002,7 @@
     next()
   }
 
-  httpLogger.type = &#x27;static&#x27;
+  httpLogger.type = 'static'
   return httpLogger
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
@@ -2031,7 +2024,7 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">tinylr = function (opt) {
   opt = xtend(opt)
-  if (typeof opt.port !== &#x27;number&#x27;) {
+  if (typeof opt.port !== 'number') {
     opt.port = 35729
   }
 
@@ -2045,16 +2038,16 @@
   server.listen(opt.port, opt.host || undefined, function () {
     ready = true
     if (closed) return server.close()
-    log.info({ message: &#x27;LiveReload running on &#x27; + opt.port })
+    log.info({ message: 'LiveReload running on ' + opt.port })
   })
 
   var serverImpl = server.server
-  serverImpl.removeAllListeners(&#x27;error&#x27;)
-  serverImpl.on(&#x27;error&#x27;, function (err) {
-    if (err.code === &#x27;EADDRINUSE&#x27;) {
-      process.stderr.write(&#x27;ERROR: livereload not started, port &#x27; + opt.port + &#x27; is in use\n&#x27;)
+  serverImpl.removeAllListeners('error')
+  serverImpl.on('error', function (err) {
+    if (err.code === 'EADDRINUSE') {
+      process.stderr.write('ERROR: livereload not started, port ' + opt.port + ' is in use\n')
     } else {
-      process.stderr.write((err.stack ? err.stack : err) + &#x27;\n&#x27;)
+      process.stderr.write((err.stack ? err.stack : err) + '\n')
     }
     close()
   })
@@ -2072,7 +2065,7 @@
       try {
         server.changed({
           body: {
-            files: path ? [ path ] : &#x27;*&#x27;
+            files: path ? [ path ] : '*'
           }
         })
       } catch (e) {
@@ -2111,3 +2104,4 @@
     ]
 </div>
 </div>
+</body></html>
