@@ -1,6 +1,6 @@
 # npmdoc-budo
 
-#### api documentation for  [budo (v9.4.7)](https://github.com/mattdesl/budo)  [![npm package](https://img.shields.io/npm/v/npmdoc-budo.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-budo) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-budo.svg)](https://travis-ci.org/npmdoc/node-npmdoc-budo)
+#### basic api documentation for  [budo (v10.0.3)](https://github.com/mattdesl/budo)  [![npm package](https://img.shields.io/npm/v/npmdoc-budo.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-budo) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-budo.svg)](https://travis-ci.org/npmdoc/node-npmdoc-budo)
 
 #### a browserify server for rapid prototyping
 
@@ -33,34 +33,34 @@
     },
     "dependencies": {
         "bole": "^2.0.0",
-        "browserify": "^13.0.1",
+        "browserify": "^14.1.0",
         "chokidar": "^1.0.1",
-        "connect-pushstate": "^1.0.0",
+        "connect-pushstate": "^1.1.0",
         "escape-html": "^1.0.3",
         "events": "^1.0.2",
         "garnish": "^5.0.0",
         "get-ports": "^1.0.2",
-        "http-proxy": "^1.14.0",
-        "inject-lr-script": "^2.0.0",
+        "inject-lr-script": "^2.1.0",
         "internal-ip": "^1.0.1",
         "micromatch": "^2.2.0",
-        "minimist": "^1.1.0",
         "on-finished": "^2.3.0",
         "on-headers": "^1.0.1",
         "once": "^1.3.2",
         "opn": "^3.0.2",
+        "path-is-absolute": "^1.0.1",
         "pem": "^1.8.3",
+        "reload-css": "^1.0.0",
         "resolve": "^1.1.6",
-        "resp-modifier": "^6.0.0",
         "serve-static": "^1.10.0",
         "simple-html-index": "^1.4.0",
         "stacked": "^1.1.1",
         "stdout-stream": "^1.4.0",
         "strip-ansi": "^3.0.0",
+        "subarg": "^1.0.0",
         "term-color": "^1.0.1",
-        "tiny-lr": "^0.2.0",
         "url-trim": "^1.0.0",
         "watchify-middleware": "^1.6.0",
+        "ws": "^1.1.1",
         "xtend": "^4.0.0"
     },
     "description": "a browserify server for rapid prototyping",
@@ -70,6 +70,7 @@
         "babelify": "^7.3.0",
         "brfs": "^1.4.0",
         "canvas-loop": "^1.0.4",
+        "connect-slashes": "^1.3.1",
         "getuservideo": "^0.1.3",
         "ndjson": "^1.4.1",
         "request": "^2.53.0",
@@ -78,14 +79,15 @@
         "tape": "^4.0.0",
         "through2": "^2.0.0",
         "tree-kill": "^1.0.0",
+        "uglify-js": "^2.7.5",
         "win-spawn": "^2.0.0"
     },
     "directories": {},
     "dist": {
-        "shasum": "a6cdcf2572c22ed1331ae91f34a07f265b3dd20b",
-        "tarball": "https://registry.npmjs.org/budo/-/budo-9.4.7.tgz"
+        "shasum": "8cdaf3b503aab5a7b70711fda24ca4cbb94c6124",
+        "tarball": "https://registry.npmjs.org/budo/-/budo-10.0.3.tgz"
     },
-    "gitHead": "fdf5d0e6dba28a73d9e95b6d71361bf44f24aa27",
+    "gitHead": "fac6bf2b7706bf5bb2b72c227fb3cf93a9edd415",
     "homepage": "https://github.com/mattdesl/budo",
     "keywords": [
         "browserify",
@@ -122,11 +124,14 @@
         "url": "git://github.com/mattdesl/budo.git"
     },
     "scripts": {
+        "bundle-live-client": "node bin/bundle-livereload-client.js",
+        "live": "node example/live.js example/app.js:bundle.js --dir example -- -t [ babelify --presets [ es2015 ] ]",
+        "prepublish": "npm run bundle-live-client",
         "pushstate": "node bin/cmd.js example/app.js:bundle.js -v --dir example --live --pushstate -- -t [ babelify --presets [ es2015 ] ]",
         "start": "node bin/cmd.js example/app.js:bundle.js --live -v --dir example -- -t [ babelify --presets [ es2015 ] ]",
         "test": "standard && tape test/test*.js | tap-spec"
     },
-    "version": "9.4.7"
+    "version": "10.0.3"
 }
 ```
 
